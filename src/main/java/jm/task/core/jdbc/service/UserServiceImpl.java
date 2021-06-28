@@ -18,8 +18,6 @@ public class UserServiceImpl implements UserService {
             sql.append("age INT NOT NULL);");
             Statement statement = connection.createStatement();
             System.out.println(statement.executeUpdate(sql.toString()));
-        } catch (SQLException e) {
-            throw e;
         }
     }
 
@@ -27,9 +25,7 @@ public class UserServiceImpl implements UserService {
         try (Connection connection = Util.connect()) {
             Statement statement = connection.createStatement();
             statement.executeUpdate("DROP TABLE IF EXISTS Users;");
-        } catch (SQLException e) {
-         throw e;
-    }
+        }
     }
 
     public void saveUser(String name, String lastName, byte age) throws SQLException {
@@ -39,9 +35,7 @@ public class UserServiceImpl implements UserService {
                 preparedStatement.setString(2, lastName);
                 preparedStatement.setInt(3, (int) age);
                 preparedStatement.executeUpdate();
-           System.out.println("User с именем - " + name + " добавлен в базу данных");
-        } catch (SQLException e) {
-           throw e;
+                System.out.println("User с именем - " + name + " добавлен в базу данных");
         }
    }
     public void removeUserById(long id) throws SQLException {
@@ -51,8 +45,6 @@ public class UserServiceImpl implements UserService {
             sql.append(Long.toString(id));
             sql.append(";");
             statement.executeUpdate(sql.toString());
-        } catch (SQLException e) {
-            throw e;
         }
     }
 
@@ -71,9 +63,7 @@ public class UserServiceImpl implements UserService {
                 users = userTmp;
             }
         }
-        catch (SQLException e) {
-            throw e;
-        }
+
         if (users == null) {
             return new LinkedList<User>();
         }
@@ -83,8 +73,6 @@ public class UserServiceImpl implements UserService {
     public void cleanUsersTable() throws SQLException {
       try (Statement statement = Util.connect().createStatement()) {
            statement.executeUpdate("TRUNCATE TABLE Users;");
-      } catch (SQLException e) {
-          throw e;
       }
     }
 }
