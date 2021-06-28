@@ -17,6 +17,7 @@ public class UserServiceImpl implements UserService {
 
     public void saveUser(String name, String lastName, byte age) {
         new UserDaoHibernateImpl().saveUser(name, lastName, age);
+        System.out.println("User с именем - " + name + " добавлен в базу данных");
     }
 
     public void removeUserById(long id) {
@@ -24,8 +25,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public List<User> getAllUsers() {
-        new UserDaoHibernateImpl().getAllUsers();
-        return null;
+        return new UserDaoHibernateImpl().getAllUsers();
     }
 
     public void cleanUsersTable() {
