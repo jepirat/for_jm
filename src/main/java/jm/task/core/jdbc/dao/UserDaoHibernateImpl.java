@@ -16,17 +16,11 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void createUsersTable() throws SQLException {
-        StringBuilder sql = new StringBuilder();
-        sql.append("CREATE TABLE IF NOT EXISTS Users(");
-        sql.append("id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, ");
-        sql.append("name TEXT NOT NULL, ");
-        sql.append("lastName TEXT NOT NULL, ");
-        sql.append("age INT NOT NULL);");
-
         Transaction transaction = null;
         try (Session session =  Util.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            Query query = session.createSQLQuery(sql.toString() );
+            Query query = session.createSQLQuery("CREATE TABLE IF NOT EXISTS Users(id INT NOT NULL AUTO_INCREMENT PRIMARY KEY" +
+                    ", name TEXT NOT NULL, lastName TEXT NOT NULL, age INT NOT NULL);");
             query.executeUpdate();
             transaction.commit();
         }
@@ -46,22 +40,11 @@ public class UserDaoHibernateImpl implements UserDao {
     @Override
     public void saveUser(String name, String lastName, byte age) {
         Transaction transaction = null;
-        StringBuilder sql = new StringBuilder();
-        sql.append("INSERT INTO  Users  (name, lastName, age) VALUES (");
-        sql.append("'");
-        sql.append(name);
-        sql.append("'");
-        sql.append(", ");
-        sql.append("'");
-        sql.append(lastName);
-        sql.append("'");
-        sql.append(", ");
-        sql.append("'");
-        sql.append(age);
-        sql.append("');");
+        String sql = "INSERT INTO  Users  (name, lastName, age) VALUES (name = :name, lastName = :lastName, age = :age)";
         try (Session session =  Util.getSessionFactory().openSession()) {
+            User user = new User(name, lastName, age);
             transaction = session.beginTransaction();
-            session.createSQLQuery(sql.toString()).executeUpdate();
+            session.save(user);
             transaction.commit();
         }
     }
@@ -72,7 +55,8 @@ public class UserDaoHibernateImpl implements UserDao {
         Transaction transaction = null;
         try (Session session =  Util.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            Query query = session.createSQLQuery("delete from Users where id =" + id + ";");
+            Query query = session.createSQLQuery("delete from Users where id = :id");
+            query.setParameter("id", id);
             query.executeUpdate();
             transaction.commit();
         }
